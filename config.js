@@ -16,13 +16,13 @@ const config = {
     },
 
     seo: {
-        titulo: "Ana María Herrera Morales | Mis XV 2026",
-        descripcion: "Mis Quince Años de Ana María Herrera Morales - 10 de Octubre 2026",
+        titulo: "Zoe Daniela | Mis XV 2026",
+        descripcion: "Mis Quince Años de Zoe Daniela - 10 de Octubre 2026",
         autor: "Two Design"
     },
 
     pareja: {
-        nombres: "Ana María & Herrera Morales",
+        nombres: "Zoe Daniela",
         fecha: "10-10-2026",
         fechaVisible: "10.10.2026"
     },
@@ -38,14 +38,14 @@ const config = {
             lugar: "Catedral del Espíritu Santo",
             hora: "5:00 PM",
             direccion: "Quetzaltenango",
-            ubicacionUrl: "https://maps.app.goo.gl/aQxFWkmErYBQMzUx8"
+            ubicacionUrl: "https://maps.app.goo.gl/UR8YG5dqu9fzo5NeA"
         },
         recepcion: {
             titulo: "Recepción",
-            lugar: "Restaurante Don Carlos, Circunvalación Salcajá",
+            lugar: "Restaurante Don Carlos",
             hora: "6:00 PM",
-            direccion: "Salcajá",
-            ubicacionUrl: "https://maps.app.goo.gl/Xj7gMRzDHDsdtHK8A"
+            direccion: "Circunvalación Salcajá",
+            ubicacionUrl: "https://maps.app.goo.gl/AHz7RSJHoNs1GPiV7"
         }
     },
 
@@ -55,7 +55,7 @@ const config = {
     },
 
     footer: {
-        hashtag: "#MisXVanaMaria",
+        hashtag: "#MisXVZoeDaniela",
         instagramUrl: "https://instagram.com/rocio.fernando.boda",
         facebookUrl: "https://facebook.com/rociofernandoboda",
         marcaTexto: "Diseno",

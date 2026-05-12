@@ -3,13 +3,12 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Pink Champagne - XV Años</title>
-  <meta name="description" content="Invitación web elegante para XV Años con estilo editorial minimalista.">
-  <meta name="author" content="Two Design">
+  <title>Mis Quince Zoe Daniela</title>
+  <meta name="description" content="Vamos a celebrar y disfrutar de mi fiesta.">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&family=Great+Vibes&family=Luxurious+Script&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" integrity="sha512-SnH5WK+bZxgPHs44uWix+LLJAJ9/2PkPKZ5QiAj6Ta86w+fsb2TkR4j8R5Z4hXg9vY8mW4nM+T2W4J0fM4P8xg==" crossorigin="anonymous" referrerpolicy="no-referrer">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" referrerpolicy="no-referrer">
   <link rel="stylesheet" href="style.css">
 </head>
 <body class="portada-lock">
@@ -27,8 +26,6 @@
   </section>
 
   <div id="invitacion" class="invitacion-shell" aria-live="polite">
-    <a id="scroll-hint" href="#hero" aria-label="Deslizar hacia abajo">Desliza hacia abajo</a>
-
     <aside id="side-menu" class="side-menu section" aria-label="Navegación">
       <nav>
         <ul>
@@ -50,10 +47,11 @@
     <main class="main-content">
       <section id="hero" class="section hero zoom-in-element">
         <div class="hero-overlay"></div>
-        <img class="hero-image" src="images/fotos/V3.png" alt="Zoe Daniela Rodriguez Ochoa">
+        <img class="hero-image" src="images/fotos/V3.png" alt="Zoe Daniela Rodriguez Ochoa" data-parallax data-parallax-speed="0.045" data-parallax-max="28">
         <div class="hero-content fade-in-element">
           <h2 class="hero-title zoom-in-element">Zoe Daniela Rodríguez Ochoa</h2>
         </div>
+        <a id="scroll-hint" href="#frase" aria-label="Deslizar hacia abajo">Desliza hacia abajo</a>
       </section>
 
       <section id="frase" class="section frase fade-in-element">
@@ -64,7 +62,7 @@
       </section>
 
       <section id="separador-sobre" class="section separador-sobre fade-in-element" aria-label="Separador">
-        <img src="images/SOBRE.png" alt="Sobre decorativo">
+        <img src="images/SOBRE.png" alt="Sobre decorativo" data-parallax data-parallax-speed="0.028" data-parallax-max="16">
       </section>
 
       <section id="rsvp-section" class="section rsvp slide-left fade-in-element">
@@ -74,7 +72,7 @@
         <div class="rsvp-card">
           <p id="nombre-invitado" class="invitado-nombre">Invitado Especial</p>
           <p class="invitado-mensaje">Eres muy especial para nosotros</p>
-          <h4 class="invitado-lugares">Hemos reservado para ti <span id="numero-lugares">2</span> lugares especiales</h4>
+          <h4 class="invitado-lugares">Hemos reservado para ti <span id="numero-lugares">2</span> lugares especiales.</h4>
 
           <p class="rsvp-intro">Confirma tu asistencia para brindarte una experiencia inolvidable.</p>
           <form id="rsvp-form" novalidate>
@@ -90,7 +88,7 @@
 
       <section id="contador" class="section countdown zoom-in-element">
         <div class="countdown-inner">
-          <h3>Sabado 23 de Mayo 2026</h3>
+          <h3>Sábado 23 de mayo de 2026</h3>
           <div class="count-grid">
             <div><span id="days">00</span><small>Días</small></div>
             <div><span id="hours">00</span><small>Horas</small></div>
@@ -103,13 +101,13 @@
 
       <section id="agradecimiento" class="section frase fade-in-element">
         <div class="frase-content">
-          <p>Gracias por ser parte de este momento unico.</p>
+          <p>Gracias por ser parte de este momento único.</p>
         </div>
       </section>
 
       <section id="padres" class="section padres slide-right fade-in-element">
         <div class="padres-content">
-          <p class="padres-intro">Con el amor de Dios y la bendicion de mis padres</p>
+          <p class="padres-intro">Con el amor de Dios y la bendición de mis padres</p>
           <h3>Herman Rodríguez y Shirley Ochoa de Rodríguez</h3>
         </div>
       </section>
@@ -134,62 +132,65 @@
             <img class="event-emoji" src="images/Iconos/CHURCH.svg" alt="Ceremonia">
             <h4 class="event-title"><span class="event-inicial">C</span><span class="event-resto">eremonia</span></h4>
             <p id="ceremonia-nombre" class="event-lugar">Catedral del Espíritu Santo</p>
-            <a class="btn-location event-parallax-btn" href="https://maps.app.goo.gl/aQxFWkmErYBQMzUx8" target="_blank" rel="noopener">Ubicacion</a>
+            <p id="ceremonia-direccion" class="event-direccion">Quetzaltenango</p>
+            <a class="btn-location event-parallax-btn" href="https://maps.app.goo.gl/UR8YG5dqu9fzo5NeA" target="_blank" rel="noopener">Ubicación</a>
           </article>
           <article class="event-card slide-right">
             <img class="event-emoji" src="images/Iconos/DINNER.svg" alt="Recepción">
-            <h4 class="event-title"><span class="event-inicial">R</span><span class="event-resto">ecepcion</span></h4>
-            <p id="recepcion-nombre" class="event-lugar">Restaurante Don Carlos, Circunvalación Salcajá</p>
-            <a class="btn-location event-parallax-btn" href="https://maps.app.goo.gl/Xj7gMRzDHDsdtHK8A" target="_blank" rel="noopener">Ubicacion</a>
+            <h4 class="event-title"><span class="event-inicial">R</span><span class="event-resto">ecepción</span></h4>
+            <p id="recepcion-nombre" class="event-lugar">Restaurante Don Carlos</p>
+            <p id="recepcion-direccion" class="event-direccion">Circunvalación Salcajá</p>
+            <a class="btn-location event-parallax-btn" href="https://maps.app.goo.gl/AHz7RSJHoNs1GPiV7" target="_blank" rel="noopener">Ubicación</a>
           </article>
         </div>
       </section>
 
       <section id="dresscode" class="section dresscode fade-in-element">
-        <div class="section-head">
-          <h3>Codigo de Vestimenta</h3>
-        </div>
         <div class="dress-card">
-          <span class="dress-icon">✨</span>
-          <p>Formal y Elegante, nos hemos reservado el color Champan, no olvides abrigarte bien.</p>
-          <h4>Inspiracion</h4>
+          <h3 class="dress-title">Código de Vestimenta</h3>
+          <div class="dress-icons" aria-hidden="true">
+            <img class="dress-icon" src="images/Iconos/lady.svg" alt="">
+            <img class="dress-icon" src="images/Iconos/groom.svg" alt="">
+          </div>
+          <p class="dress-copy">Formal y elegante; nos hemos reservado el color champán, no olvides abrigarte bien.</p>
+          <h4 class="dress-subtitle">Inspiracion</h4>
           <a class="btn-soft" href="https://es.pinterest.com/search/pins/?q=Outfits%20para%20invitadas%20e%20invitados%20para%20fiesta&rs=typed" target="_blank" rel="noopener">Ir a Pinterest</a>
         </div>
       </section>
 
       <section id="regalos" class="section regalos fade-in-element">
         <div class="regalos-card">
-          <span class="regalos-icon">💌</span>
-          <h3>Lluvia de Sobres</h3>
-          <p>Tu presencia es el mejor regalo, pero si deseas tener un detalle, agradezo que sea en efectivo</p>
+          <img class="regalos-icon" src="images/Iconos/GIFTS.svg" alt="Regalos">
+          <h3 class="regalos-title">Lluvia de Sobres</h3>
+          <p class="regalos-copy">Tu presencia es el mejor regalo, pero si deseas tener un detalle, agradezco que sea en efectivo.</p>
         </div>
       </section>
 
       <section id="separador-h1" class="section separador-h1 fade-in-element" aria-label="Separador">
-        <img src="images/fotos/H1.png" alt="Separador decorativo">
+        <img src="images/fotos/H1.png" alt="Separador decorativo" data-parallax data-parallax-speed="0.024" data-parallax-max="14">
       </section>
 
       <section id="fotos" class="section fotos fade-in-element">
         <div class="fotos-card">
-          <h3>¡Hagamos los recuerdos realidad!</h3>
+          <h3 class="fotos-title">¡Hagamos los recuerdos realidad!</h3>
           <img class="fotos-qr" src="images/QR-ZOE.svg" alt="QR para subir fotos y videos">
-          <p>Ayúdanos a inmortalizar este día tan especial, compartiendo con nosotros las fotos y videos que captures. Lo puedes hacer escaneando el QR o subiendolas en el boton.</p>
-          <a class="btn-soft" href="https://drive.google.com/drive/folders/1dWgSgV3frl_pkQDEcomF9RL3Ts51d8Bb?usp=drive_link" target="_blank" rel="noopener">Subir fotos</a>
+          <p class="fotos-copy">Ayúdanos a inmortalizar este día tan especial, compartiendo con nosotros las fotos y videos que captures. Puedes hacerlo escaneando el QR o subiéndolas en el botón.</p>
+          <a class="btn-soft" href="https://drive.google.com/drive/folders/1dWgSgV3frl_pkQDEcomF9RL3Ts51d8Bb?usp=drive_link" target="_blank" rel="noopener">Subir Fotos</a>
         </div>
       </section>
 
       <section id="separador-v2" class="section separador-v2 fade-in-element" aria-label="Separador">
-        <img src="images/fotos/V2.png" alt="Separador decorativo">
+        <img src="images/fotos/V5.jpeg" alt="Separador decorativo" data-parallax data-parallax-speed="0.024" data-parallax-max="14">
       </section>
 
       <section class="section frase-final zoom-in-element">
-        <p>Tu presencia es el mejor Regalo. Nos sentimos bendecidos de compartir este día tan especial contigo.</p>
+          <p class="frase-final-title">Tu presencia es el mejor regalo. Nos sentimos bendecidos de compartir este día tan especial contigo.</p>
       </section>
     </main>
 
     <footer id="footer" class="footer visible" style="--reveal-order: 3;">
       <div id="social-icons">
-        <a href="https://wa.me/50236011737" target="_blank" rel="noopener noreferrer" aria-label="Whatsapp">
+        <a href="https://wa.me/50236011737" target="_blank" rel="noopener noreferrer" aria-label="WhatsApp">
           <i class="fab fa-whatsapp"></i>
         </a>
         <a href="https://facebook.com/rociofernandoboda" target="_blank" rel="noopener noreferrer" aria-label="Facebook">
@@ -206,24 +207,12 @@
     </footer>
   </div>
 
-  <section id="deseos" class="wishes-hidden" aria-hidden="true" hidden>
-    <form id="wish-form" action="#">
-      <input id="wish-name" type="text" name="wish-name">
-      <textarea id="wish-message" name="wish-message"></textarea>
-      <button type="submit">Enviar</button>
-    </form>
-    <div id="wishes"></div>
-  </section>
-
-  <div id="gift-modal" class="gift-modal" aria-hidden="true" data-modal-close="true">
-    <div class="gift-modal-box" role="dialog" aria-modal="true" aria-label="Datos de cuenta">
-      <button id="gift-modal-close" class="gift-modal-close" type="button" aria-label="Cerrar">×</button>
-      <h4>Datos para transferencia</h4>
-      <p id="gift-account-data">Banco Premium\nCuenta: 001122334455\nCLABE: 123456789012345678\nTitular: Ana María Herrera</p>
-      <button id="btn-copy-account" class="btn-soft" type="button">Copiar datos</button>
-      <p id="gift-copy-feedback" class="gift-feedback"></p>
-    </div>
-  </div>
+  <button id="music-fab" class="music-fab" type="button" aria-label="Pausar musica" hidden>
+    <span class="music-fab-icon" aria-hidden="true">♪</span>
+  </button>
+  <audio id="bg-music" preload="auto" loop>
+    <source src="audio/nuestra-cancion.mp3" type="audio/mpeg">
+  </audio>
 
 
   <script src="config.js"></script>

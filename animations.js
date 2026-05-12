@@ -55,7 +55,6 @@
 
   revealQueue.forEach((element) => revealObserver.observe(element));
 
-  const scrollHint = document.getElementById("scroll-hint");
   const floatingMenu = document.querySelector(".floating-ui");
   const parallaxNodes = [...document.querySelectorAll("[data-parallax]")];
 
@@ -63,10 +62,6 @@
 
   const updateOnScroll = () => {
     const y = window.scrollY || window.pageYOffset;
-
-    if (scrollHint) {
-      scrollHint.classList.toggle("is-hidden", y > 60);
-    }
 
     if (floatingMenu) {
       floatingMenu.classList.toggle("is-scrolled", y > 40);
@@ -80,8 +75,10 @@
           return;
         }
 
+        const speed = Number(node.dataset.parallaxSpeed || 0.02);
+        const maxShift = Number(node.dataset.parallaxMax || 18);
         const distanceToCenter = rect.top + rect.height / 2 - viewportHeight / 2;
-        const intensity = Math.max(-10, Math.min(10, -distanceToCenter * 0.02));
+        const intensity = Math.max(-maxShift, Math.min(maxShift, -distanceToCenter * speed));
         node.style.transform = `translate3d(0, ${intensity}px, 0)`;
       });
     }

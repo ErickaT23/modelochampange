@@ -4,6 +4,7 @@ document.addEventListener('DOMContentLoaded', async function() {
     await hydrateSiteConfigForEvent();
     applySiteConfig();
     await InvitadoApp.init();
+    MusicBubble.init();
     MensajeFlota.init();
     initPortada();
     initScrollAnimations();
@@ -94,19 +95,19 @@ function createSiteConfig(remoteConfig) {
         evento: {
             ceremonia: {
                 titulo: 'Ceremonia',
-                lugar: 'Catedral del Espiritu Santo',
+                lugar: 'Catedral del Espíritu Santo',
                 hora: '17:00 hrs',
-                direccion: '',
-                ubicacionUrl: 'https://maps.app.goo.gl/aQxFWkmErYBQMzUx8',
+                direccion: 'Quetzaltenango',
+                ubicacionUrl: 'https://maps.app.goo.gl/UR8YG5dqu9fzo5NeA',
                 ...(localEvento.ceremonia || {}),
                 ...(remoteEvento.ceremonia || {})
             },
             recepcion: {
-                titulo: 'Recepcion',
-                lugar: 'Restaurante Don Carlos, Circunvalacion Salcaja',
+                titulo: 'Recepción',
+                lugar: 'Restaurante Don Carlos',
                 hora: '19:00 hrs',
-                direccion: '',
-                ubicacionUrl: 'https://maps.app.goo.gl/Xj7gMRzDHDsdtHK8A',
+                direccion: 'Circunvalación Salcajá',
+                ubicacionUrl: 'https://maps.app.goo.gl/AHz7RSJHoNs1GPiV7',
                 ...(localEvento.recepcion || {}),
                 ...(remoteEvento.recepcion || {})
             }
@@ -186,9 +187,23 @@ function applySiteConfig() {
     const invitadoMensaje = document.querySelector('.invitado-mensaje');
     if (invitadoMensaje) invitadoMensaje.textContent = SiteConfig.textos.mensajeInvitado;
 
-    applyEventCard('.events-container .event-card:nth-child(1)', SiteConfig.evento.ceremonia);
-    applyEventCard('.events-container .event-card:nth-child(2)', SiteConfig.evento.recepcion);
+    const fixedCeremonia = {
+        ...SiteConfig.evento.ceremonia,
+        lugar: 'Catedral del Espíritu Santo',
+        direccion: 'Quetzaltenango',
+        ubicacionUrl: 'https://maps.app.goo.gl/UR8YG5dqu9fzo5NeA'
+    };
+    const fixedRecepcion = {
+        ...SiteConfig.evento.recepcion,
+        lugar: 'Restaurante Don Carlos',
+        direccion: 'Circunvalación Salcajá',
+        ubicacionUrl: 'https://maps.app.goo.gl/AHz7RSJHoNs1GPiV7'
+    };
+
+    applyEventCard('.events-container .event-card:nth-child(1)', fixedCeremonia);
+    applyEventCard('.events-container .event-card:nth-child(2)', fixedRecepcion);
     applyFooterConfig();
+    MusicBubble.applyConfig();
 }
 
 function applySeoConfig() {
@@ -382,6 +397,7 @@ function initPortada() {
     if (!portada || !btnAbrir || !invitacion) return;
 
     function openInvitation() {
+        MusicBubble.startFromUserGesture();
         document.body.style.overflow = 'auto';
         document.body.classList.remove('portada-lock');
 
@@ -396,6 +412,7 @@ function initPortada() {
         
         setTimeout(function() {
             portada.style.display = 'none';
+            MusicBubble.reveal();
         }, 1200);
     }
 
@@ -410,6 +427,7 @@ function initPortada() {
 // ============================================
 const MensajeFlota = {
     el: null,
+    hideTimer: null,
 
     init() {
         this.el = document.getElementById('scroll-hint');
@@ -417,12 +435,99 @@ const MensajeFlota = {
 
     mostrar() {
         if (!this.el) return;
-        
+
+        if (this.hideTimer) {
+            window.clearTimeout(this.hideTimer);
+            this.hideTimer = null;
+        }
+
+        this.el.style.transform = 'translateX(-50%) translateY(0)';
         this.el.classList.add('mostrar');
-        
-        setTimeout(() => {
+
+        this.hideTimer = window.setTimeout(() => {
             this.el.classList.remove('mostrar');
+            this.el.style.transform = 'translateX(-50%) translateY(8px)';
         }, 10000);
+    }
+};
+
+const MusicBubble = {
+    button: null,
+    icon: null,
+    audio: null,
+    isPlaying: false,
+
+    init() {
+        this.button = document.getElementById('music-fab');
+        this.icon = this.button ? this.button.querySelector('.music-fab-icon') : null;
+        this.audio = document.getElementById('bg-music');
+        if (!this.button || !this.audio) return;
+
+        this.audio.volume = 0.65;
+        this.button.addEventListener('click', () => this.togglePlayback());
+        this.syncVisualState(false);
+    },
+
+    applyConfig() {
+        if (!this.audio) return;
+        const configuredSrc = String((SiteConfig.musica && SiteConfig.musica.archivo) || '').trim();
+        if (!configuredSrc) return;
+
+        const source = this.audio.querySelector('source');
+        if (source && source.getAttribute('src') !== configuredSrc) {
+            source.setAttribute('src', configuredSrc);
+            this.audio.load();
+        }
+    },
+
+    async startFromUserGesture() {
+        if (!this.audio || !this.button) return;
+
+        try {
+            await this.audio.play();
+            this.isPlaying = true;
+            this.syncVisualState(true);
+        } catch (error) {
+            this.isPlaying = false;
+            this.syncVisualState(false);
+            console.warn('No se pudo iniciar la musica automaticamente:', error);
+        }
+    },
+
+    reveal() {
+        if (!this.button) return;
+        this.button.hidden = false;
+        window.requestAnimationFrame(() => {
+            this.button.classList.add('is-visible');
+        });
+    },
+
+    async togglePlayback() {
+        if (!this.audio) return;
+
+        if (this.isPlaying) {
+            this.audio.pause();
+            this.isPlaying = false;
+            this.syncVisualState(false);
+            return;
+        }
+
+        try {
+            await this.audio.play();
+            this.isPlaying = true;
+            this.syncVisualState(true);
+        } catch (error) {
+            this.isPlaying = false;
+            this.syncVisualState(false);
+            console.warn('No se pudo reanudar la musica:', error);
+        }
+    },
+
+    syncVisualState(playing) {
+        if (!this.button) return;
+        this.button.classList.toggle('is-playing', playing);
+        this.button.setAttribute('aria-label', playing ? 'Pausar musica' : 'Reproducir musica');
+        if (this.icon) this.icon.textContent = playing ? '♫' : '♪';
     }
 };
 
