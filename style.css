@@ -806,6 +806,12 @@ p {
   background: rgba(255, 250, 244, 0.86);
 }
 
+#rsvp-final-message {
+  font-family: "Cormorant Garamond", serif;
+  color: #c59ea2 !important;
+  font-style: italic;
+}
+
 .countdown {
   color: #fff;
   background: #efe0d0 url("images/fotos/V4.jpeg") center top / contain no-repeat;
@@ -1675,6 +1681,9 @@ p {
 .rsvp-popup-message {
   margin: 0.52rem 0 0.08rem;
   font-size: 0.92rem;
+  font-family: "Cormorant Garamond", serif;
+  color: #c59ea2 !important;
+  font-style: italic;
 }
 
 .rsvp-popup.is-error {

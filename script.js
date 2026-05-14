@@ -21,7 +21,7 @@ const externalConfig = window.config || {};
 function resolveEventId() {
     const eventConfig = externalConfig.event || {};
     const eventIdParam = String(eventConfig.eventIdParam || 'eventId').trim() || 'eventId';
-    const defaultEventId = String(eventConfig.defaultEventId || 'misxv-ana-maria-2026').trim() || 'misxv-ana-maria-2026';
+    const defaultEventId = String(eventConfig.defaultEventId || 'misxv-zoe-daniela-2026').trim() || 'misxv-zoe-daniela-2026';
     const params = new URLSearchParams(window.location.search || '');
     const paramValue = String(params.get(eventIdParam) || '').trim();
     const eventId = paramValue || defaultEventId;
@@ -73,14 +73,14 @@ function createSiteConfig(remoteConfig) {
 
     return {
         seo: {
-            titulo: 'Ana María Herrera Morales | Mis XV 2026',
+            titulo: 'Zoe Daniela | Mis XV 2026',
             descripcion: 'Mis Quince Años de Zoe Daniela - 30 de mayo de 2026',
             autor: 'Two Design',
             ...externalConfig.seo,
             ...normalizedRemoteConfig.seo
         },
         pareja: {
-            nombres: 'Ana María & Herrera Morales',
+            nombres: 'Zoe Daniela',
             fecha: '30-05-2026',
             fechaVisible: '30.05.2026',
             ...externalConfig.pareja,
@@ -119,7 +119,7 @@ function createSiteConfig(remoteConfig) {
             ...normalizedRemoteConfig.textos
         },
         footer: {
-            hashtag: '#MisXVanaMaria',
+            hashtag: '#MisXVZoeDaniela',
             instagramUrl: 'https://instagram.com/rocio.fernando.boda',
             facebookUrl: 'https://facebook.com/rociofernandoboda',
             marcaTexto: 'Diseno',
@@ -187,21 +187,8 @@ function applySiteConfig() {
     const invitadoMensaje = document.querySelector('.invitado-mensaje');
     if (invitadoMensaje) invitadoMensaje.textContent = SiteConfig.textos.mensajeInvitado;
 
-    const fixedCeremonia = {
-        ...SiteConfig.evento.ceremonia,
-        lugar: 'Iglesia Catedral',
-        direccion: 'Quetzaltenango',
-        ubicacionUrl: 'https://maps.app.goo.gl/UR8YG5dqu9fzo5NeA'
-    };
-    const fixedRecepcion = {
-        ...SiteConfig.evento.recepcion,
-        lugar: 'Restaurante Don Carlos',
-        direccion: 'Circunvalación Salcajá',
-        ubicacionUrl: 'https://maps.app.goo.gl/AHz7RSJHoNs1GPiV7'
-    };
-
-    applyEventCard('.events-container .event-card:nth-child(1)', fixedCeremonia);
-    applyEventCard('.events-container .event-card:nth-child(2)', fixedRecepcion);
+    applyEventCard('.events-container .event-card:nth-child(1)', SiteConfig.evento.ceremonia);
+    applyEventCard('.events-container .event-card:nth-child(2)', SiteConfig.evento.recepcion);
     applyFooterConfig();
     MusicBubble.applyConfig();
 }
@@ -695,7 +682,7 @@ function initRSVP() {
     const activeEventId = String(window.currentEventId || '').trim();
     let formLocked = false;
     let isCheckingStatus = false;
-    const previewMode = true;
+    const previewMode = Boolean(externalConfig && externalConfig.event && externalConfig.event.previewMode);
     const defaultIntroText = introMessage ? introMessage.textContent : '';
     const confirmedIntroText = 'Gracias por haber completado el formulario de asistencia.';
     

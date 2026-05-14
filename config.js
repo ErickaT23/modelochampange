@@ -1,6 +1,6 @@
 const config = {
     event: {
-        defaultEventId: "misxv-ana-maria-2026",
+        defaultEventId: "misxv-zoe-daniela-2026",
         eventIdParam: "eventId",
         legacyFallback: {
             read: false,
