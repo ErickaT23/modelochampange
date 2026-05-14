@@ -808,9 +808,7 @@ p {
 
 .countdown {
   color: #fff;
-  background:
-    linear-gradient(0deg, rgba(31, 20, 17, 0.18), #efe0d059),
-    url("images/fotos/V4.jpeg") center / cover no-repeat;
+  background: #efe0d0 url("images/fotos/V4.jpeg") center top / contain no-repeat;
 }
 
 #contador {
@@ -819,15 +817,15 @@ p {
   max-width: none;
   border-radius: 0;
   border: 0;
-  min-height: 100svh;
+  min-height: 115svh;
   display: flex;
   align-items: flex-start;
   justify-content: center;
-  padding-top: 10px;
+  padding: 10px clamp(0.9rem, 3vw, 1.6rem) 0;
 }
 
 .countdown-inner {
-  width: min(920px, 100%);
+  width: min(980px, 100%);
   margin-inline: auto;
   text-align: center;
 }
@@ -849,6 +847,8 @@ p {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
   gap: 0.6rem;
+  max-width: 780px;
+  margin-inline: auto;
   font-family: "Cormorant Garamond", serif;
   text-transform: uppercase;
   margin-top: -10px;
@@ -1745,6 +1745,17 @@ p {
 }
 
 @media (max-width: 860px) {
+  .countdown {
+    background-position: center top;
+    background-size: contain;
+  }
+
+  #contador {
+    min-height: 108svh;
+    align-items: flex-start;
+    padding: 10px 0.9rem 0;
+  }
+
   .hero {
     height: 100svh;
     min-height: 100svh;
@@ -1768,7 +1779,7 @@ p {
   .hero-image {
     min-height: 100%;
     object-fit: cover;
-    object-position: 72% center;
+    object-position: 85% center;
   }
 }
 
