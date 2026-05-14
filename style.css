@@ -364,10 +364,11 @@ p {
 
 #rsvp-section {
   position: relative;
-  margin-top: 0 !important;
   z-index: auto;
   background-color: #f2e8dc;
   box-shadow: 0 -16px 34px rgba(82, 58, 45, 0.11), 0 14px 32px rgba(112, 82, 65, 0.16);
+      margin-top: -30px;
+    margin-bottom: 20px;
 }
 
 .hero {
@@ -379,19 +380,22 @@ p {
   width: 100%;
   max-width: none;
   margin-top: 0;
-  border: 0;
+  margin: 0;
+  border: 3px solid #c7a24a;
   border-radius: 0;
   box-shadow: none;
-  background: transparent;
+  background: #1b1513;
   margin-bottom: 0;
 }
 
 .hero-image {
   position: absolute;
   inset: 0;
+  display: block;
   width: 100%;
   height: 100%;
   object-fit: cover;
+  object-position: 62% center;
   min-height: 100%;
   transform: none;
 }
@@ -422,14 +426,14 @@ p {
   padding: 10px;
   line-height: 0.95;
   color: transparent !important;
-  background: linear-gradient(180deg, #2e2e2e 0%, #141414 38%, #080808 60%, #2a2a2a 100%);
+  background: linear-gradient(180deg, #b7867e 0%, #93645e 34%, #6f4743 62%, #b07a72 100%);
   -webkit-background-clip: text;
   background-clip: text;
   -webkit-text-fill-color: transparent;
   text-shadow:
-    0 3px 6px rgba(0, 0, 0, 0.42),
-    0 0 14px rgba(255, 255, 255, 0.26),
-    0 0 2px rgba(255, 255, 255, 0.34);
+    0 3px 6px rgba(35, 20, 20, 0.42),
+    0 0 14px rgba(206, 158, 150, 0.22),
+    0 0 2px rgba(255, 236, 228, 0.28);
   animation: roseShimmer 3.8s linear infinite, portadaNameZoom 4.2s ease-in-out infinite;
 }
 
@@ -533,7 +537,7 @@ p {
   letter-spacing: 0.02em;
   line-height: 1.45;
   text-shadow: none;
-  background: radial-gradient(circle at 50% 45%, #ecd8da 0%, #d8b8bb 30%, #c59ea2 62%, #b18589 100%);
+  background: radial-gradient(circle at 50% 45%, #d0afb2 0%, #c9a8ac 30%, #c59ea2 62%, #805d5d 100%);
   -webkit-background-clip: text;
   background-clip: text;
   -webkit-text-fill-color: transparent;
@@ -592,7 +596,7 @@ p {
   font-weight: 300;
   letter-spacing: 0.02em;
   line-height: 1.45;
-  background: radial-gradient(circle at 50% 45%, #ecd8da 0%, #d8b8bb 30%, #c59ea2 62%, #b18589 100%);
+  background: radial-gradient(circle at 50% 45%, #d0afb2 0%, #c9a8ac 30%, #c59ea2 62%, #805d5d 100%);
   -webkit-background-clip: text;
   background-clip: text;
   -webkit-text-fill-color: transparent;
@@ -651,7 +655,7 @@ p {
   font-family: "Luxurious Script", cursive;
   font-weight: 500;
   letter-spacing: 0.02em;
-  background: radial-gradient(circle at 50% 45%, #ecd8da 0%, #d8b8bb 30%, #c59ea2 62%, #b18589 100%);
+  background: radial-gradient(circle at 50% 45%, #d0afb2 0%, #c9a8ac 30%, #c59ea2 62%, #805d5d 100%);
   -webkit-background-clip: text;
   background-clip: text;
   -webkit-text-fill-color: transparent;
@@ -831,7 +835,7 @@ p {
 .countdown h3 {
   font-family: "Luxurious Script", cursive;
   font-weight: 500;
-  background: radial-gradient(circle at 50% 45%, #d5bfc1 0%, #d8b8bb 30%, #c59ea2 62%, #f2e4e5 100%);
+  background: radial-gradient(circle at 50% 45%, #d0afb2 0%, #c9a8ac 30%, #c59ea2 62%, #805d5d 100%);
   -webkit-background-clip: text;
   background-clip: text;
   -webkit-text-fill-color: transparent;
@@ -853,10 +857,10 @@ p {
 .count-grid div {
   border: 2px solid transparent;
   border-image: linear-gradient(140deg, #f7e7b0 0%, #d9b56a 28%, #fff3c8 52%, #c89949 76%, #f2dd9f 100%) 1;
-  background: rgba(232, 198, 208, 0.56);
+  background: rgb(232 198 208 / 24%);
   border-radius: 0;
   text-align: center;
-  padding: 0.75rem 0.3rem;
+  padding: 4px;
   box-shadow: inset 0 0 10px rgba(255, 236, 188, 0.18);
   animation: textSlideInSoft 0.9s ease-out both;
 }
@@ -864,7 +868,7 @@ p {
 .count-grid span {
   display: block;
   font-family: "Cormorant Garamond", serif;
-  font-size: clamp(1.9rem, 6vw, 3.1rem);
+  font-size: 20px;
   line-height: 1;
   color: #c59ea2;
 }
@@ -878,7 +882,7 @@ p {
 }
 
 .countdown-calendar {
-  background: #e3c5c8;
+  background: #e3c5c8b0;
   color: #8e6228 !important;
   font-family: "Cormorant Garamond", serif;
   font-weight: 600;
@@ -935,7 +939,7 @@ p {
   font-family: "Luxurious Script", cursive;
   font-weight: 500;
   letter-spacing: 0.02em;
-  background: radial-gradient(circle at 50% 45%, #ecd8da 0%, #d8b8bb 30%, #c59ea2 62%, #b18589 100%);
+  background: radial-gradient(circle at 50% 45%, #d0afb2 0%, #c9a8ac 30%, #c59ea2 62%, #805d5d 100%);
   -webkit-background-clip: text;
   background-clip: text;
   -webkit-text-fill-color: transparent;
@@ -957,7 +961,7 @@ p {
 #itinerario .section-head h3 {
   font-family: "Luxurious Script", cursive;
   font-weight: 500;
-  background: radial-gradient(circle at 50% 45%, #ecd8da 0%, #d8b8bb 30%, #c59ea2 62%, #b18589 100%);
+  background: radial-gradient(circle at 50% 45%, #d0afb2 0%, #c9a8ac 30%, #c59ea2 62%, #805d5d 100%);
   -webkit-background-clip: text;
   background-clip: text;
   -webkit-text-fill-color: transparent;
@@ -1048,7 +1052,7 @@ p {
   font-size: 40px;
   font-family: "Luxurious Script", cursive;
   font-weight: 500;
-  background: radial-gradient(circle at 50% 45%, #ecd8da 0%, #d8b8bb 30%, #c59ea2 62%, #b18589 100%);
+  background: radial-gradient(circle at 50% 45%, #d0afb2 0%, #c9a8ac 30%, #c59ea2 62%, #805d5d 100%);
   -webkit-background-clip: text;
   background-clip: text;
   -webkit-text-fill-color: transparent;
@@ -1131,7 +1135,7 @@ p {
   font-family: "Luxurious Script", cursive;
   font-size: 33px;
   font-weight: 500;
-  background: radial-gradient(circle at 50% 45%, #ecd8da 0%, #d8b8bb 30%, #c59ea2 62%, #b18589 100%);
+  background: radial-gradient(circle at 50% 45%, #d0afb2 0%, #c9a8ac 30%, #c59ea2 62%, #805d5d 100%);
   -webkit-background-clip: text;
   background-clip: text;
   -webkit-text-fill-color: transparent;
@@ -1212,7 +1216,7 @@ p {
   font-family: "Luxurious Script", cursive;
   font-weight: 500;
   letter-spacing: 0.02em;
-  background: radial-gradient(circle at 50% 45%, #ecd8da 0%, #d8b8bb 30%, #c59ea2 62%, #b18589 100%);
+  background: radial-gradient(circle at 50% 45%, #d0afb2 0%, #c9a8ac 30%, #c59ea2 62%, #805d5d 100%);
   -webkit-background-clip: text;
   background-clip: text;
   -webkit-text-fill-color: transparent;
@@ -1608,7 +1612,7 @@ p {
   font-family: "Luxurious Script", cursive;
   font-weight: 600;
   letter-spacing: 0.02em;
-  background: radial-gradient(circle at 50% 45%, #ecd8da 0%, #d8b8bb 30%, #c59ea2 62%, #b18589 100%);
+  background: radial-gradient(circle at 50% 45%, #d0afb2 0%, #c9a8ac 30%, #c59ea2 62%, #805d5d 100%);
   -webkit-background-clip: text;
   background-clip: text;
   -webkit-text-fill-color: transparent;
@@ -1741,6 +1745,14 @@ p {
 }
 
 @media (max-width: 860px) {
+  .hero {
+    height: 100svh;
+    min-height: 100svh;
+    width: 100%;
+    margin: 0;
+    border-width: 2px;
+  }
+
   .padres-grid,
   .events-container,
   .gift-options,
@@ -1754,7 +1766,9 @@ p {
   }
 
   .hero-image {
-    min-height: 70svh;
+    min-height: 100%;
+    object-fit: cover;
+    object-position: 72% center;
   }
 }
 

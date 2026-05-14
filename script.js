@@ -74,15 +74,15 @@ function createSiteConfig(remoteConfig) {
     return {
         seo: {
             titulo: 'Ana María Herrera Morales | Mis XV 2026',
-            descripcion: 'Mis Quince Años de Ana María Herrera Morales - 10 de Octubre 2026',
+            descripcion: 'Mis Quince Años de Zoe Daniela - 30 de mayo de 2026',
             autor: 'Two Design',
             ...externalConfig.seo,
             ...normalizedRemoteConfig.seo
         },
         pareja: {
             nombres: 'Ana María & Herrera Morales',
-            fecha: '10-10-2026',
-            fechaVisible: '10.10.2026',
+            fecha: '30-05-2026',
+            fechaVisible: '30.05.2026',
             ...externalConfig.pareja,
             ...normalizedRemoteConfig.pareja
         },
@@ -95,7 +95,7 @@ function createSiteConfig(remoteConfig) {
         evento: {
             ceremonia: {
                 titulo: 'Ceremonia',
-                lugar: 'Catedral del Espíritu Santo',
+                lugar: 'Iglesia Catedral',
                 hora: '17:00 hrs',
                 direccion: 'Quetzaltenango',
                 ubicacionUrl: 'https://maps.app.goo.gl/UR8YG5dqu9fzo5NeA',
@@ -189,7 +189,7 @@ function applySiteConfig() {
 
     const fixedCeremonia = {
         ...SiteConfig.evento.ceremonia,
-        lugar: 'Catedral del Espíritu Santo',
+        lugar: 'Iglesia Catedral',
         direccion: 'Quetzaltenango',
         ubicacionUrl: 'https://maps.app.goo.gl/UR8YG5dqu9fzo5NeA'
     };
@@ -624,7 +624,7 @@ function initEventButtonsParallax() {
 }
 
 function getEventDateFromConfig() {
-    return new Date('2026-05-23T00:00:00').getTime();
+    return new Date('2026-05-30T00:00:00').getTime();
 }
 
 function initAutoGallery() {
