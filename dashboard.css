@@ -1,20 +1,20 @@
 :root {
-    --bg: #f7f4ef;
-    --paper: #fffaf6;
-    --paper-strong: #fffdfb;
-    --rose: #e2b5bd;
-    --rose-dark: #7f4a57;
-    --rose-deep: #7c3f4d;
-    --beige: #efe2d3;
-    --gold-1: #f2e6b3;
-    --gold-2: #d6c27a;
-    --gold-3: #9c8c49;
-    --ink: #2d1e22;
-    --ink-soft: #75646a;
-    --line: rgba(124, 63, 77, 0.2);
-    --line-soft: rgba(124, 63, 77, 0.11);
-    --shadow-card: 0 16px 36px rgba(101, 70, 76, 0.11);
-    --shadow-soft: 0 8px 24px rgba(101, 70, 76, 0.08);
+    --bg: #f2e8dc;
+    --paper: #fffcf8;
+    --paper-strong: #fffdf9;
+    --rose: #d9b6ad;
+    --rose-dark: #8e6c61;
+    --rose-deep: #6d574b;
+    --beige: #e8d7c4;
+    --gold-1: #e8d7c4;
+    --gold-2: #b8925b;
+    --gold-3: #8b6f46;
+    --ink: #4e4138;
+    --ink-soft: #7b6a61;
+    --line: rgba(184, 146, 91, 0.26);
+    --line-soft: rgba(184, 146, 91, 0.15);
+    --shadow-card: 0 16px 36px rgba(94, 74, 64, 0.13);
+    --shadow-soft: 0 8px 24px rgba(94, 74, 64, 0.1);
     --radius-lg: 24px;
     --radius-md: 18px;
     --radius-sm: 14px;
@@ -45,9 +45,9 @@ body {
     font-family: var(--font-body);
     color: var(--ink);
     background:
-        radial-gradient(circle at 10% -8%, rgba(226, 181, 189, 0.36) 0%, rgba(247, 244, 239, 0) 42%),
-        radial-gradient(circle at 100% 0%, rgba(214, 194, 122, 0.22) 0%, rgba(247, 244, 239, 0) 36%),
-        linear-gradient(180deg, #fffaf6 0%, #f7f4ef 100%);
+        radial-gradient(circle at 10% -8%, rgba(217, 182, 173, 0.3) 0%, rgba(242, 232, 220, 0) 42%),
+        radial-gradient(circle at 100% 0%, rgba(184, 146, 91, 0.2) 0%, rgba(242, 232, 220, 0) 36%),
+        linear-gradient(180deg, #fffdf9 0%, #f2e8dc 100%);
 }
 
 .dashboard-shell {
@@ -106,7 +106,7 @@ body {
     font-size: clamp(3.1rem, 7.5vw, 5rem);
     font-weight: 400;
     line-height: 0.9;
-    background: linear-gradient(120deg, #f5c3cc 0%, #e58a9b 20%, #d46a7f 40%, #f7aebc 50%, #d46a7f 60%, #c85a70 80%, #e58a9b 100%);
+    background: linear-gradient(120deg, #b8925b 0%, #d9b6ad 25%, #8e6c61 50%, #d9b6ad 75%, #b8925b 100%);
     background-size: 200% auto;
     -webkit-background-clip: text;
     background-clip: text;
@@ -162,12 +162,12 @@ body {
 }
 
 .summary-card-highlight {
-    background: linear-gradient(145deg, rgba(127, 74, 87, 0.95) 0%, rgba(93, 53, 64, 0.98) 100%);
-    border-color: rgba(127, 74, 87, 0.34);
+    background: linear-gradient(145deg, rgba(184, 146, 91, 0.98) 0%, rgba(139, 111, 70, 0.98) 100%);
+    border-color: rgba(184, 146, 91, 0.42);
 }
 
 .summary-card-highlight::before {
-    background: linear-gradient(90deg, rgba(242, 230, 179, 0.9), rgba(255, 251, 247, 0.3));
+    background: linear-gradient(90deg, rgba(255, 244, 215, 0.95), rgba(255, 252, 244, 0.42));
 }
 
 .summary-label {
@@ -325,21 +325,23 @@ body {
 
 .table-clear-btn {
     padding: 0.56rem 0.92rem;
-    background: rgba(255, 251, 247, 0.84);
-    color: var(--rose-deep);
+    border-color: rgba(184, 146, 91, 0.45);
+    background: rgba(255, 250, 242, 0.92);
+    color: var(--gold-3);
 }
 
 .table-export-btn {
     padding: 0.56rem 1rem;
-    border-color: rgba(127, 74, 87, 0.8);
-    background: linear-gradient(135deg, rgba(127, 74, 87, 0.95), rgba(93, 53, 64, 0.98));
-    color: #fffaf6;
+    border-color: rgba(184, 146, 91, 0.85);
+    background: linear-gradient(135deg, rgba(184, 146, 91, 0.98), rgba(139, 111, 70, 0.98));
+    color: #fffdf7;
 }
 
 .filter-chip {
     padding: 0.45rem 0.74rem;
-    background: rgba(255, 251, 247, 0.78);
-    color: var(--rose-deep);
+    border-color: rgba(184, 146, 91, 0.4);
+    background: rgba(255, 250, 242, 0.82);
+    color: var(--gold-3);
 }
 
 .table-clear-btn:hover,
@@ -351,8 +353,8 @@ body {
 
 .table-clear-btn:hover,
 .filter-chip:hover {
-    border-color: rgba(127, 74, 87, 0.45);
-    background: rgba(239, 226, 211, 0.7);
+    border-color: rgba(184, 146, 91, 0.62);
+    background: rgba(232, 215, 196, 0.6);
 }
 
 .table-export-btn:hover {
@@ -360,9 +362,9 @@ body {
 }
 
 .filter-chip.is-active {
-    border-color: rgba(127, 74, 87, 0.84);
-    background: linear-gradient(135deg, rgba(127, 74, 87, 0.95), rgba(93, 53, 64, 0.98));
-    color: #fffaf6;
+    border-color: rgba(184, 146, 91, 0.9);
+    background: linear-gradient(135deg, rgba(184, 146, 91, 0.98), rgba(139, 111, 70, 0.98));
+    color: #fffdf7;
 }
 
 .table-export-btn:disabled {
