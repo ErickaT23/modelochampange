@@ -362,7 +362,8 @@ const GuestConfig = {
         "111": { nombre: "Allyson Minnely", pases: 1 },
         "112": { nombre: "Camila", pases: 1 },
         "113": { nombre: "Melany Vasquez", pases: 1 },
-        "114": { nombre: "Carlos Tucux", pases: 1 }
+        "114": { nombre: "Carlos Tucux", pases: 1 },
+        "3B": { nombre: "Compañeros y Compañeras de 3ro. Básico", pases: 20 }
     },
     invitadoDefault: { nombre: "Invitado Especial", pases: 2 },
     paramId: 'id'
@@ -433,7 +434,8 @@ const InvitadoApp = {
         const nombreEl = document.getElementById('nombre-invitado');
 
         if (nombreEl) nombreEl.textContent = this.data.nombre;
-        this.renderPasesText(this.data.pases);
+        const displayPases = String(this.data && this.data.id || '') === '3B' ? 1 : this.data.pases;
+        this.renderPasesText(displayPases);
     },
 
     renderPasesText(pases) {
@@ -456,7 +458,8 @@ const InvitadoApp = {
         const guestsSelect = document.getElementById('guest-count');
         const responseYes = document.getElementById('rsvp-response-yes');
         const responseNo = document.getElementById('rsvp-response-no');
-        const totalPases = Math.max(1, Number(this.data && this.data.pases) || 1);
+        const isSpecialGroup = String(this.data && this.data.id || '') === '3B';
+        const totalPases = isSpecialGroup ? 1 : Math.max(1, Number(this.data && this.data.pases) || 1);
 
         if (nameInput) {
             nameInput.value = this.data.nombre;
@@ -792,9 +795,10 @@ function initRSVP() {
     const submitBtn = document.getElementById('rsvp-submit');
     const confirmationMessages = {
         si: 'Gracias por confirmar tu asistencia. Nos vemos pronto.',
-        no: 'Lamentamos que no puedas acompanarnos, te extranaremos.'
+        no: 'Lamentamos que no puedas acompañarnos, te extrañaremos.'
     };
     const activeEventId = String(window.currentEventId || '').trim();
+    const specialGroupId = '3B';
     let formLocked = false;
     let isCheckingStatus = false;
     const previewMode = Boolean(externalConfig && externalConfig.event && externalConfig.event.previewMode);
@@ -854,8 +858,8 @@ function initRSVP() {
             '<p class="rsvp-popup-subtitle">Lugares reservados</p>',
             '<select id="rsvp-popup-count" class="rsvp-popup-select">' + options.join('') + '</select>',
             '<div class="rsvp-popup-actions">',
-            '<button type="button" id="rsvp-popup-yes" class="rsvp-popup-btn">Si, con mucho gusto</button>',
-            '<button type="button" id="rsvp-popup-no" class="rsvp-popup-btn secondary">No, lamentablemente no podre</button>',
+            '<button type="button" id="rsvp-popup-yes" class="rsvp-popup-btn">Sí, con mucho gusto</button>',
+            '<button type="button" id="rsvp-popup-no" class="rsvp-popup-btn secondary">No, lamentablemente no podré</button>',
             '</div>'
         ].join('');
 
@@ -901,6 +905,36 @@ function initRSVP() {
 
         placePopupNearRSVP();
         overlay.classList.add('active');
+    }
+
+    function getDeviceKey() {
+        const storageKey = 'rsvp-device-key::' + activeEventId + '::' + guestId;
+        try {
+            const existing = window.localStorage.getItem(storageKey);
+            if (existing) return String(existing);
+        } catch (error) {
+            console.warn('No se pudo leer device key local:', error);
+        }
+
+        const parts = [
+            String(navigator.userAgent || ''),
+            String(navigator.language || ''),
+            String(window.screen && window.screen.width || ''),
+            String(window.screen && window.screen.height || ''),
+            String(new Date().getTimezoneOffset() || '')
+        ].join('|');
+        let hash = 0;
+        for (let i = 0; i < parts.length; i += 1) {
+            hash = (hash << 5) - hash + parts.charCodeAt(i);
+            hash |= 0;
+        }
+        const raw = 'dv_' + Math.abs(hash) + '_' + Math.floor(Math.random() * 1000000);
+        try {
+            window.localStorage.setItem(storageKey, raw);
+        } catch (error) {
+            console.warn('No se pudo guardar device key local:', error);
+        }
+        return raw;
     }
 
     function setConfirmedFormVisibility(confirmed) {
@@ -956,6 +990,12 @@ function initRSVP() {
     async function getExistingConfirmation(guestId) {
         const rsvpDB = window.RSVPDatabase;
         if (!rsvpDB || typeof rsvpDB.getConfirmationByGuestId !== 'function') return null;
+
+        if (guestId === specialGroupId && typeof rsvpDB.getGroupDeviceStatus === 'function') {
+            const deviceKey = getDeviceKey();
+            return rsvpDB.getGroupDeviceStatus(activeEventId, guestId, deviceKey);
+        }
+
         return rsvpDB.getConfirmationByGuestId(activeEventId, guestId);
     }
 
@@ -964,12 +1004,19 @@ function initRSVP() {
         if (!rsvpDB || typeof rsvpDB.saveConfirmation !== 'function') {
             return payload;
         }
+        if (guestId === specialGroupId) {
+            const deviceKey = getDeviceKey();
+            return rsvpDB.saveConfirmation(activeEventId, {
+                ...payload,
+                options: { deviceKey }
+            });
+        }
         return rsvpDB.saveConfirmation(activeEventId, payload);
     }
 
     const guestData = InvitadoApp.getData() || {};
     const guestId = String(guestData.id || 'default');
-    const maxAllowedCount = Math.max(1, Number(guestData.pases) || 1);
+    const maxAllowedCount = guestId === specialGroupId ? 1 : Math.max(1, Number(guestData.pases) || 1);
 
     async function checkConfirmedStatusOnLoad() {
         if (previewMode) {
@@ -1021,7 +1068,7 @@ function initRSVP() {
             nombre: String(guestData.nombre || ''),
             pasesAsignados: maxAllowedCount,
             respuesta,
-            cantidadConfirmada: confirmedCount,
+            cantidadConfirmada: guestId === specialGroupId && respuesta === 'si' ? 1 : confirmedCount,
             confirmado: true,
             fechaConfirmacion: Date.now()
         };
@@ -1033,7 +1080,7 @@ function initRSVP() {
             applyConfirmedState(savedRecord);
             showResultPopup(confirmationMessages[respuesta]);
         } catch (error) {
-            if (error && error.code === 'RSVP_ALREADY_CONFIRMED') {
+            if (error && (error.code === 'RSVP_ALREADY_CONFIRMED' || error.code === 'RSVP_ALREADY_CONFIRMED_DEVICE')) {
                 const existingRecord = (error.existingData && error.existingData.confirmado)
                     ? error.existingData
                     : await getExistingConfirmation(guestId);
@@ -1041,9 +1088,21 @@ function initRSVP() {
                 if (existingRecord && existingRecord.confirmado) {
                     applyConfirmedState(existingRecord);
                     const existingResponse = String(existingRecord.respuesta || '').toLowerCase() === 'si' ? 'si' : 'no';
-                    showResultPopup(confirmationMessages[existingResponse]);
+                    if (guestId === specialGroupId && existingResponse === 'si') {
+                        showResultPopup('Gracias, ya has confirmado tu asistencia');
+                    } else if (guestId === specialGroupId && existingResponse === 'no') {
+                        showResultPopup('Lamentamos que no puedas acompañarnos, te extrañaremos');
+                    } else {
+                        showResultPopup(confirmationMessages[existingResponse]);
+                    }
                     return;
                 }
+            }
+
+            if (error && error.code === 'RSVP_GROUP_FULL') {
+                showResultPopup('Lo sentimos, el cupo para este grupo ya esta lleno.', true);
+                if (submitBtn && !formLocked) submitBtn.disabled = false;
+                return;
             }
 
             console.error('Error al guardar RSVP:', error);

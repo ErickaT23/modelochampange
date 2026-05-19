@@ -5,7 +5,8 @@ const guestDirectorySeed = {
     "2": { nombre: "Carlos Méndez", pases: 4 },
     "3": { nombre: "Andrea Ruiz", pases: 1 },
     "4": { nombre: "Familia García", pases: 6 },
-    "5": { nombre: "Pedro Sánchez", pases: 2 }
+    "5": { nombre: "Pedro Sánchez", pases: 2 },
+    "3B": { nombre: "Compañeros y Compañeras de 3ro. Básico", pases: 20 }
 };
 
 const guestDirectoriesByEvent = {
@@ -86,15 +87,24 @@ function normalizeResponse(response) {
 
 function normalizeConfirmation(record) {
     const response = normalizeResponse(record && record.respuesta);
+    const isGroupPool = Boolean(record && record.isGroupPool);
+    const groupConfirmados = Math.max(0, Number(record && record.confirmados) || 0);
+    const groupNoAsistiran = Math.max(0, Number(record && record.noAsistiran) || 0);
+    const groupCapacidadTotal = Math.max(0, Number(record && record.capacidadTotal) || 0);
     return {
         id: normalizeGuestId(record && (record.id || record._key)),
         nombre: String(record && record.nombre || ""),
-        pasesAsignados: Math.max(0, Number(record && record.pasesAsignados) || 0),
+        pasesAsignados: isGroupPool ? groupCapacidadTotal : Math.max(0, Number(record && record.pasesAsignados) || 0),
         respuesta: response,
         cantidadConfirmada: response === "si"
-            ? Math.max(0, Number(record && record.cantidadConfirmada) || 0)
+            ? (isGroupPool ? groupConfirmados : Math.max(0, Number(record && record.cantidadConfirmada) || 0))
             : 0,
-        fechaConfirmacion: Number(record && record.fechaConfirmacion) || null
+        fechaConfirmacion: Number(record && record.fechaConfirmacion) || null,
+        isGroupPool,
+        capacidadTotal: groupCapacidadTotal,
+        confirmados: groupConfirmados,
+        noAsistiran: groupNoAsistiran,
+        pendientes: Math.max(0, (groupCapacidadTotal || 0) - groupConfirmados)
     };
 }
 
@@ -277,18 +287,47 @@ function downloadCsvFile(content, eventId) {
 
 function setSummaryValues(rows) {
     const totalGuests = rows.length;
-    const totalYes = rows
-        .filter((row) => row && row.respuesta === "si")
-        .reduce((acc, row) => acc + (Number(row && row.cantidadConfirmada) || 0), 0);
-    const totalNo = rows
-        .filter((row) => row && row.respuesta === "no")
-        .reduce((acc, row) => acc + (Number(row && row.pasesAsignados) || 0), 0);
-    const totalPending = rows
-        .filter((row) => row && row.respuesta === "pendiente")
-        .reduce((acc, row) => acc + (Number(row && row.pasesAsignados) || 0), 0);
+    const totalYes = rows.reduce((acc, row) => {
+        if (!row) return acc;
+        if (row.isGroupPool) {
+            return acc + (Number(row.confirmados) || 0);
+        }
+        if (row.respuesta === "si") {
+            return acc + (Number(row.cantidadConfirmada) || 0);
+        }
+        return acc;
+    }, 0);
+    const totalNo = rows.reduce((acc, row) => {
+        if (!row) return acc;
+        if (row.isGroupPool) {
+            return acc + (Number(row.noAsistiran) || 0);
+        }
+        if (row.respuesta === "no") {
+            return acc + (Number(row.pasesAsignados) || 0);
+        }
+        return acc;
+    }, 0);
+    const totalPending = rows.reduce((acc, row) => {
+        if (!row) return acc;
+        if (row.isGroupPool) {
+            return acc + (Number(row.pendientes) || 0);
+        }
+        if (row.respuesta === "pendiente") {
+            return acc + (Number(row.pasesAsignados) || 0);
+        }
+        return acc;
+    }, 0);
     const totalConfirmedPeople = rows
-        .filter((row) => row.respuesta === "si")
-        .reduce((acc, row) => acc + (Number(row.cantidadConfirmada) || 0), 0);
+        .reduce((acc, row) => {
+            if (!row) return acc;
+            if (row.isGroupPool) {
+                return acc + (Number(row.confirmados) || 0);
+            }
+            if (row.respuesta === "si") {
+                return acc + (Number(row.cantidadConfirmada) || 0);
+            }
+            return acc;
+        }, 0);
 
     const totalGuestsEl = document.getElementById("summary-total-guests");
     const totalYesEl = document.getElementById("summary-yes");
@@ -412,12 +451,32 @@ function renderMobileCards(rows, emptyMessage) {
         const lineConfirmed = document.createElement("div");
         lineConfirmed.className = "confirmation-card-line";
         const confirmedLabel = document.createElement("span");
-        confirmedLabel.textContent = "Pases confirmados";
+        confirmedLabel.textContent = row.isGroupPool ? "Confirmados" : "Pases confirmados";
         const confirmedValue = document.createElement("strong");
-        confirmedValue.textContent = responseValue === "pendiente"
-            ? "--"
-            : String(Number(row.cantidadConfirmada) || 0);
+        confirmedValue.textContent = row.isGroupPool
+            ? String(Number(row.confirmados) || 0)
+            : (responseValue === "pendiente" ? "--" : String(Number(row.cantidadConfirmada) || 0));
         lineConfirmed.append(confirmedLabel, confirmedValue);
+
+        const linePending = document.createElement("div");
+        linePending.className = "confirmation-card-line";
+        const pendingLabel = document.createElement("span");
+        pendingLabel.textContent = "Pendientes";
+        const pendingValue = document.createElement("strong");
+        pendingValue.textContent = row.isGroupPool
+            ? String(Math.max(0, Number(row.pendientes) || 0))
+            : "--";
+        linePending.append(pendingLabel, pendingValue);
+
+        const lineNo = document.createElement("div");
+        lineNo.className = "confirmation-card-line";
+        const noLabel = document.createElement("span");
+        noLabel.textContent = "No asistirán";
+        const noValue = document.createElement("strong");
+        noValue.textContent = row.isGroupPool
+            ? String(Math.max(0, Number(row.noAsistiran) || 0))
+            : "--";
+        lineNo.append(noLabel, noValue);
 
         const lineDate = document.createElement("div");
         lineDate.className = "confirmation-card-line";
@@ -435,7 +494,7 @@ function renderMobileCards(rows, emptyMessage) {
         timeValue.textContent = dateParts.time;
         lineTime.append(timeLabel, timeValue);
 
-        details.append(lineAssigned, lineConfirmed, lineDate, lineTime);
+        details.append(lineAssigned, lineConfirmed, linePending, lineNo, lineDate, lineTime);
         card.append(nameEl, statusWrap, details);
         mobileList.appendChild(card);
     });
@@ -486,7 +545,7 @@ document.addEventListener("DOMContentLoaded", function () {
     function updateLastSync(sourceLabel) {
         if (!lastSyncEl) return;
         const suffix = sourceLabel ? " (" + sourceLabel + ")" : "";
-        lastSyncEl.textContent = "Ultima sincronizacion: " + formatSyncTime(Date.now()) + suffix;
+        lastSyncEl.textContent = "Última sincronización: " + formatSyncTime(Date.now()) + suffix;
     }
 
     function syncFilterButtons() {
@@ -498,7 +557,12 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     function getEffectiveGuestDirectory() {
-        if (hasRemoteGuestSource) return remoteGuestDirectory;
+        if (hasRemoteGuestSource) {
+            return {
+                ...fallbackGuestDirectory,
+                ...remoteGuestDirectory
+            };
+        }
         return fallbackGuestDirectory;
     }
 

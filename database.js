@@ -259,6 +259,13 @@ function parseEventAndGuestArgs(arg1, arg2) {
   return { eventId: undefined, guestId: arg1 };
 }
 
+function parseEventGuestDeviceArgs(arg1, arg2, arg3) {
+  if (typeof arg3 !== "undefined") {
+    return { eventId: arg1, guestId: arg2, deviceKey: arg3 };
+  }
+  return { eventId: undefined, guestId: arg1, deviceKey: arg2 };
+}
+
 function parseEventAndPayloadArgs(arg1, arg2) {
   if (typeof arg2 !== "undefined") {
     return { eventId: arg1, payload: arg2 };
@@ -533,6 +540,247 @@ function createAlreadyConfirmedError(existingData) {
   return error;
 }
 
+function createRsvpError(code, message, extraData) {
+  const error = new Error(message || code || "RSVP_ERROR");
+  error.code = code || "RSVP_ERROR";
+  if (extraData && typeof extraData === "object") {
+    Object.assign(error, extraData);
+  }
+  return error;
+}
+
+function getSpecialGroupPath(eventId, guestId) {
+  const safeGuestId = sanitizeFirebaseKey(guestId);
+  return getEventRsvpPath(eventId) + "/" + safeGuestId;
+}
+
+function getSpecialGroupRef(eventId, guestId) {
+  return ref(db, getSpecialGroupPath(eventId, guestId));
+}
+
+function createRandomPassCode() {
+  const alphabet = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
+  const bytes = new Uint8Array(8);
+  if (window.crypto && typeof window.crypto.getRandomValues === "function") {
+    window.crypto.getRandomValues(bytes);
+  } else {
+    for (let i = 0; i < bytes.length; i += 1) {
+      bytes[i] = Math.floor(Math.random() * 256);
+    }
+  }
+
+  let code = "";
+  for (let i = 0; i < bytes.length; i += 1) {
+    code += alphabet[bytes[i] % alphabet.length];
+  }
+  return code;
+}
+
+function buildSpecialGroupRecord(payload) {
+  const now = Date.now();
+  return {
+    id: String((payload && payload.id) || "").trim() || "default",
+    nombre: String((payload && payload.nombre) || ""),
+    pasesAsignados: Math.max(0, Number((payload && payload.pasesAsignados) || 0)),
+    respuesta: payload && payload.respuesta === "no" ? "no" : "si",
+    cantidadConfirmada: Number((payload && payload.cantidadConfirmada) || 0),
+    confirmado: true,
+    fechaConfirmacion: Number((payload && payload.fechaConfirmacion) || now),
+    isGroupPool: true,
+    capacidadTotal: 20,
+    confirmados: 0,
+    noAsistiran: 0,
+    pendientes: 20,
+    codigosEmitidos: {},
+    dispositivos: {},
+    registros: []
+  };
+}
+
+async function getGroupDeviceStatus(arg1, arg2, arg3) {
+  const parsed = parseEventGuestDeviceArgs(arg1, arg2, arg3);
+  const eventId = parsed.eventId;
+  const guestId = String(parsed.guestId || "").trim();
+  const deviceKey = sanitizeFirebaseKey(parsed.deviceKey);
+
+  if (!guestId || !deviceKey) return null;
+
+  const snapshot = await get(getSpecialGroupRef(eventId, guestId));
+  if (!snapshot.exists()) return null;
+
+  const data = snapshot.val() || {};
+  const dispositivos = data.dispositivos && typeof data.dispositivos === "object"
+    ? data.dispositivos
+    : {};
+  const existingDevice = dispositivos[deviceKey];
+  if (!existingDevice || typeof existingDevice !== "object") return null;
+
+  return {
+    confirmado: true,
+    respuesta: String(existingDevice.respuesta || "").toLowerCase() === "si" ? "si" : "no",
+    codigo: existingDevice.codigo ? String(existingDevice.codigo) : null
+  };
+}
+
+async function saveGroupConfirmation(arg1, arg2, arg3) {
+  const parsed = parseEventAndPayloadArgs(arg1, arg2);
+  const eventId = parsed.eventId;
+  const payload = parsed.payload || {};
+  const options = arg3 && typeof arg3 === "object" ? arg3 : {};
+  const deviceKey = sanitizeFirebaseKey(options.deviceKey || payload.deviceKey || "");
+  const guestId = String((payload && payload.id) || "").trim() || "default";
+  const targetRef = getSpecialGroupRef(eventId, guestId);
+  const requestedResponse = payload && payload.respuesta === "no" ? "no" : "si";
+
+  if (!deviceKey) {
+    throw createRsvpError("RSVP_DEVICE_REQUIRED", "RSVP_DEVICE_REQUIRED");
+  }
+
+  const result = await runTransaction(
+    targetRef,
+    function(currentData) {
+      const base = buildSpecialGroupRecord(payload);
+      const state = currentData && typeof currentData === "object"
+        ? { ...base, ...currentData }
+        : base;
+
+      const dispositivos = state.dispositivos && typeof state.dispositivos === "object"
+        ? { ...state.dispositivos }
+        : {};
+      const codigosEmitidos = state.codigosEmitidos && typeof state.codigosEmitidos === "object"
+        ? { ...state.codigosEmitidos }
+        : {};
+      const registros = Array.isArray(state.registros) ? state.registros.slice() : [];
+
+      const existingDevice = dispositivos[deviceKey];
+      if (existingDevice && existingDevice.confirmado) {
+        return;
+      }
+
+      const capacidadTotal = 20;
+      const confirmados = Math.max(0, Number(state.confirmados) || 0);
+      const noAsistiran = Math.max(0, Number(state.noAsistiran) || 0);
+      const now = Date.now();
+
+      if (requestedResponse === "si") {
+        if (confirmados >= capacidadTotal) {
+          return;
+        }
+
+        let codigo = "";
+        do {
+          codigo = createRandomPassCode();
+        } while (codigosEmitidos[codigo]);
+
+        codigosEmitidos[codigo] = {
+          codigo,
+          asignadoEn: now,
+          deviceKey
+        };
+
+        dispositivos[deviceKey] = {
+          deviceKey,
+          respuesta: "si",
+          codigo,
+          confirmado: true,
+          fechaConfirmacion: now
+        };
+
+        registros.push({
+          deviceKey,
+          respuesta: "si",
+          codigo,
+          cantidadConfirmada: 1,
+          fechaConfirmacion: now
+        });
+
+        const nextConfirmados = confirmados + 1;
+        const pendientes = Math.max(0, capacidadTotal - nextConfirmados);
+
+        return {
+          ...state,
+          respuesta: "si",
+          cantidadConfirmada: 1,
+          confirmado: true,
+          fechaConfirmacion: now,
+          capacidadTotal,
+          confirmados: nextConfirmados,
+          noAsistiran,
+          pendientes,
+          codigosEmitidos,
+          dispositivos,
+          registros,
+          ultimoCodigo: codigo
+        };
+      }
+
+      dispositivos[deviceKey] = {
+        deviceKey,
+        respuesta: "no",
+        codigo: null,
+        confirmado: true,
+        fechaConfirmacion: now
+      };
+
+      registros.push({
+        deviceKey,
+        respuesta: "no",
+        codigo: null,
+        cantidadConfirmada: 0,
+        fechaConfirmacion: now
+      });
+
+      return {
+        ...state,
+        respuesta: "no",
+        cantidadConfirmada: 0,
+        confirmado: true,
+        fechaConfirmacion: now,
+        capacidadTotal,
+        confirmados,
+        noAsistiran: noAsistiran + 1,
+        pendientes: Math.max(0, capacidadTotal - confirmados),
+        codigosEmitidos,
+        dispositivos,
+        registros,
+        ultimoCodigo: null
+      };
+    },
+    { applyLocally: false }
+  );
+
+  if (!result.committed) {
+    const snapshotData = result.snapshot && result.snapshot.exists() ? result.snapshot.val() : null;
+    const dispositivos = snapshotData && snapshotData.dispositivos && typeof snapshotData.dispositivos === "object"
+      ? snapshotData.dispositivos
+      : {};
+    const existingDevice = dispositivos[deviceKey];
+
+    if (existingDevice && existingDevice.confirmado) {
+      throw createRsvpError("RSVP_ALREADY_CONFIRMED_DEVICE", "RSVP_ALREADY_CONFIRMED_DEVICE", {
+        existingData: {
+          respuesta: String(existingDevice.respuesta || "").toLowerCase() === "si" ? "si" : "no",
+          codigo: existingDevice.codigo || null,
+          confirmado: true
+        }
+      });
+    }
+
+    const confirmados = Math.max(0, Number(snapshotData && snapshotData.confirmados) || 0);
+    if (confirmados >= 20) {
+      throw createRsvpError("RSVP_GROUP_FULL", "RSVP_GROUP_FULL");
+    }
+
+    throw createRsvpError("RSVP_GROUP_REJECTED", "RSVP_GROUP_REJECTED");
+  }
+
+  const saved = result.snapshot.val() || {};
+  return {
+    ...saved,
+    codigoAsignado: saved.ultimoCodigo || null
+  };
+}
+
 async function saveConfirmationWithTransaction(targetRef, record) {
   const transactionResult = await runTransaction(
     targetRef,
@@ -578,6 +826,11 @@ async function saveConfirmation(arg1, arg2) {
   const eventId = parsed.eventId;
   const payload = parsed.payload;
   const guestId = String((payload && payload.id) || "").trim() || "default";
+
+  if (guestId === "3B") {
+    return saveGroupConfirmation(eventId, payload, payload && payload.options ? payload.options : {});
+  }
+
   const record = {
     id: guestId,
     nombre: String((payload && payload.nombre) || ""),
@@ -603,6 +856,29 @@ async function saveConfirmation(arg1, arg2) {
     console.warn("No se pudo guardar RSVP por evento, usando fallback legacy:", error);
     return saveConfirmationWithTransaction(getLegacyRsvpRef(guestId), record);
   }
+}
+
+async function getGroupSummaryByGuestId(arg1, arg2) {
+  const parsed = parseEventAndGuestArgs(arg1, arg2);
+  const eventId = parsed.eventId;
+  const guestId = String(parsed.guestId || "").trim();
+  if (!guestId) return null;
+
+  const snapshot = await get(getSpecialGroupRef(eventId, guestId));
+  if (!snapshot.exists()) return null;
+  const data = snapshot.val() || {};
+  const confirmados = Math.max(0, Number(data.confirmados) || 0);
+  const capacidadTotal = 20;
+  const noAsistiran = Math.max(0, Number(data.noAsistiran) || 0);
+
+  return {
+    id: guestId,
+    nombre: String(data.nombre || ""),
+    capacidadTotal,
+    confirmados,
+    pendientes: Math.max(0, capacidadTotal - confirmados),
+    noAsistiran
+  };
 }
 
 async function getAllConfirmations(eventId) {
@@ -1418,6 +1694,8 @@ window.RSVPDatabase = {
   getEventRsvpPath,
   getEventDeseosPath,
   getConfirmationByGuestId,
+  getGroupDeviceStatus,
+  getGroupSummaryByGuestId,
   saveConfirmation,
   getAllConfirmations,
   subscribeToConfirmations,
@@ -1461,6 +1739,8 @@ export {
   getEventRsvpPath,
   getEventDeseosPath,
   getConfirmationByGuestId,
+  getGroupDeviceStatus,
+  getGroupSummaryByGuestId,
   saveConfirmation,
   getAllConfirmations,
   subscribeToConfirmations,
